@@ -48,7 +48,39 @@
 <li>
   <h2>程式碼需求</h2>
   <ul>
-    TODO
+    <li>請參照 <code><a href="https://github.com/concise/msgboard_webapp">https://github.com/concise/msgboard_webapp</a></code> 現有的這份原始碼。</li>
+    <li>已經有的功能：</li>
+      <ol>
+        <li>基本 web application 前端的雛形</li>
+        <li>基本 web application 後端的雛形</li>
+        <li>基本 web application 前端與後端之間的 HTTP 通訊（目前 server 只會 echo 回一模一樣的資料）</li>
+      </ol>
+    <li>請加上以下功能：</li>
+      <ol>
+        <li>定義每一個 message 為一個 4-tuple (emoticonid, nickname, message, timestamp)
+        <li>後端需要提供兩個 HTTP 介面
+        <li>將資料 persistently 保存在後端的硬碟上
+        <!--
+        dump the latest N entries
+        dump all after a specific time
+        dump all for a specific nickname
+        dump all for a specific emoticon
+        sort the result according to one field at the server side
+
+        client side: use Request API to connect to the server
+        client side: use DOM API to control the web page
+        client side: listen for user interaction event
+
+        client side UI: write a new message and send it to server
+        client side UI: choose to view all
+        client side UI: choose to view only the last 10 entries
+        client side UI: choose to view only the last 10 minutes
+        client side UI: choose to view only some nickname
+        client side UI: choose to view only some emoticon
+        client side UI: sort the result view according to one specific field
+        client side UI: refresh the message board
+        -->
+      </ol>
   </ul>
 </li>
 
@@ -146,6 +178,8 @@ ESLab1_Team16/msgboard_webapp/static_files/main.js</pre></li></ul>
     <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">MDN JavaScript Reference</a></li>
     <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML">MDN HTML Reference</a></li>
     <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS">MDN CSS Reference</a></li>
+    <li><a href="https://developer.chrome.com/devtools">Chrome DevTools</a></li>
+    <li><a href="https://nodejs.org/en/">Node.js</a></li>
     <li><a href="http://www.ecma-international.org/ecma-262/6.0/">ECMAScript Language Specification</a></li>
   </ol>
 </li>
