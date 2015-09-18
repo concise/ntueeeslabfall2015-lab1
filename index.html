@@ -59,27 +59,11 @@
       <ol>
         <li>定義每一個 message 為一個 4-tuple (emoticonid, nickname, message, timestamp)
         <li>後端需要額外提供至少兩個 HTTP 介面，一個用來儲存新的 message 另一個用來存取過去的 messages
-        <li>將資料 persistently 保存在後端的硬碟上，就算後端伺服器程式重啟，資料仍然是保存著的
-        <!--
-        dump the latest N entries
-        dump all after a specific time
-        dump all for a specific nickname
-        dump all for a specific emoticon
-        sort the result according to one field at the server side
-
-        client side: use Request API to connect to the server
-        client side: use DOM API to control the web page
-        client side: listen for user interaction event
-
-        client side UI: write a new message and send it to server
-        client side UI: choose to view all
-        client side UI: choose to view only the last 10 entries
-        client side UI: choose to view only the last 10 minutes
-        client side UI: choose to view only some nickname
-        client side UI: choose to view only some emoticon
-        client side UI: sort the result view according to one specific field
-        client side UI: refresh the message board
-        -->
+        <li>後端需要將資料 persistently 保存在檔案系統中，就算後端伺服器程式重啟，資料仍然是保存著的
+        <li>前端需要提供一個 UI 讓使用者可以輸入新的 message 並且發送到後端</li>
+        <li>前端需要提供一個 UI 讓使用者可以重新刷新所有的 messages</li>
+        <li>前端需要提供一個 UI 讓使用者可以選擇使用某一個欄位排序 messages</li>
+        <li>前端需要提供一個 UI 讓使用者可以選擇只出現某一個欄位為特定值的 messages</li>
       </ol>
   </ul>
 </li>
