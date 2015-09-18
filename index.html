@@ -58,8 +58,8 @@
     <li>請加上以下功能：</li>
       <ol>
         <li>定義每一個 message 為一個 4-tuple (emoticonid, nickname, message, timestamp)
-        <li>後端需要提供兩個 HTTP 介面
-        <li>將資料 persistently 保存在後端的硬碟上
+        <li>後端需要額外提供至少兩個 HTTP 介面，一個用來儲存新的 message 另一個用來存取過去的 messages
+        <li>將資料 persistently 保存在後端的硬碟上，就算後端伺服器程式重啟，資料仍然是保存著的
         <!--
         dump the latest N entries
         dump all after a specific time
