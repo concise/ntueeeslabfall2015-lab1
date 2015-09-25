@@ -8,6 +8,10 @@
   pre, code {
     font-size: larger;
   }
+  li {
+    margin-top: 1em;
+    margin-top: 1em;
+  }
 </style>
 </head>
 <body>
@@ -38,6 +42,7 @@
   <h2>報告需求</h2>
   <ul>
     <li>你們在進行這個實驗、學習新技術、撰寫程式碼時，是否曾經遇過問題？（任何方面，包含學習上、撰寫程式上、除錯上⋯⋯）如果有的話，請描述之，並說明你們是如何面對那些困難的。</li>
+    <li>請簡述你們的程式要怎麼使用。</li>
     <li>請嘗試著去描述這份 web application 程式碼實際運作時，它包含的各個元件的角色是什麼，實際上又會發生什麼樣的互動。除了文字描述以外，也可以試著用圖或表輔助。</li>
     <li>如果你們有挑戰加分項目：對於每一個加分項目，請描述你們做了什麼事情。</li>
     <li>如果覺得實驗一的設計、規劃、難易度等方面，有任何不適應或者可以改進的地方，除了可以在 Facebook 社團反映，在報告中也可以提出來。</li>
@@ -49,21 +54,58 @@
   <h2>程式碼需求</h2>
   <ul>
     <li>請參照 <code><a href="https://github.com/concise/msgboard_webapp">https://github.com/concise/msgboard_webapp</a></code> 現有的這份原始碼。</li>
-    <li>已經有的功能：</li>
+    <li>示範用的 web app 有哪些功能：</li>
       <ol>
         <li>基本 web application 前端的雛形</li>
         <li>基本 web application 後端的雛形</li>
         <li>基本 web application 前端與後端之間的 HTTP 通訊（目前 server 只會 echo 回一模一樣的資料）</li>
       </ol>
-    <li>請加上以下功能：</li>
+    <li>請改寫這份程式（或者重頭開始寫一份新的）以做到具有以下功能的簡易留言板：</li>
       <ol>
-        <li>定義每一個 message 為一個 4-tuple (emoticonid, nickname, message, timestamp)
-        <li>後端需要額外提供至少兩個 HTTP 介面，一個用來儲存新的 message 另一個用來存取過去的 messages
-        <li>後端需要將資料 persistently 保存在檔案系統中，就算後端伺服器程式重啟，資料仍然是保存著的
-        <li>前端需要提供一個 UI 讓使用者可以輸入新的 message 並且發送到後端</li>
-        <li>前端需要提供一個 UI 讓使用者可以重新刷新所有的 messages</li>
-        <li>前端需要提供一個 UI 讓使用者可以選擇使用某一個欄位排序 messages</li>
-        <li>前端需要提供一個 UI 讓使用者可以選擇只出現某一個欄位為特定值的 messages</li>
+
+        <li>我們先定義「一則留言」為一個 4-tuple (nickname, emoji, message, timestamp) 依照順序他們的資料格式分別有以下規定：
+          <ul>
+            <li>nickname 是字串，格式為 <code>/^[a-z0-9]{3,10}$/</code>
+            <li>emoji 是數值，必須為 0, 1, 2, 3, or 4 其中一個數值</code>
+            <li>message 是字串，要求不可以為空字串</code>
+            <li>timestamp 是數值，為伺服器接收到這則留言的 UNIX/POSIX/Epoch time 時戳 (以秒為單位)</code>
+          </ul>
+        </li>
+
+        <li>後端需要額外提供至少兩個 HTTP 介面，一個是 <code>POST /submit</code> 另一個是 <code>POST /read_all</code>，而這兩個 HTTP 介面都只用 JSON 格式做資料交換。
+          其中 <code>POST /submit</code> 請求必須是一個物件，要有至少 <code>nickname</code> 、<code>emoji</code>、<code>message</code> 三個屬性；
+          而 <code>POST /submit</code> 的結果必須是一個物件，至少要有一個布林值的 <code>ok</code> 屬性表示該請求成功或失敗，如果失敗了可以再加上 optional 的 <code>reason</code> 屬性解釋原因。
+          <code>POST /read_all</code> 的結果會是一個陣列，陣列元素就是當前保存在伺服器上的所有留言，每一個留言是用陣列表示的 4-tuple 資料結構。
+          下面有幾個例子：
+          <ul>
+            <li><pre>$ curl -X POST http://127.0.0.1:2015/submit -d '{"nickname":"","emoji":6,"message":""}'
+{"ok":false,"reason":"you must provide a valid nickname"}</pre></li>
+            <li><pre>$ curl -X POST http://127.0.0.1:2015/submit -d '{"nickname":"tester","emoji":1,"message":"Hello JavaScript!"}'
+{"ok":true}</pre></li>
+            <li><pre>$ curl -X POST http://127.0.0.1:2015/submit -d '{"nickname":"tester2","emoji":3,"message":"It works!"}'
+{"ok":true}</pre></li>
+            <li><pre>curl -X POST http://127.0.0.1:2015/read_all
+[["tester",1,"Hello JavaScript!",1443153611],["tester2",3,"It works!",1443153687]]</pre></li>
+          </ul>
+        </li>
+
+        <li>後端接收到 <code>POST /submit</code> 的 HTTP request 時必須做適當的檢查，將不符合條件的輸入排除。（上列第一個 curl 指令就是這樣的例子）</li>
+
+        <li>後端需要將資料 persistently 保存在檔案 <code>data.db</code> 中，就算伺服器端的 Node.js 程式重啟（用 CTRL-C 或者 SIGINT 信號），資料仍然是保存著的。一個簡單的做法是直接把所有留言（每個留言都是長度為 4 的陣列）組成的陣列，直接用 JSON 編碼後存在檔案裡。如果想要使用別的格式來做也可以，我們對檔案的格式沒有任何限制。</li>
+
+        <li>前端需要提供一個簡單的操作介面，讓使用者可以輸入新的留言（選擇暱稱、選擇表情符號、輸入文字），並提供一個操作介面（例如一個按鈕）可以把留言發送到後端。</li>
+
+        <li>前端需要提供一個簡單的操作介面，讓使用者可以重新刷新所有的留言。一個簡單的例子是提供一個按鈕，每當被按下時，就會發送請求至後端，顯示當前最新的所有留言。</li>
+
+        <li>顯示所有留言時，要做適當的「轉換」，至少要包含：
+          <ul>
+            <li>將 UNIX time 轉換為 <code>yyyy/mm/dd hh:mm:ss</code> 格式</li>
+            <li>將 emoji 數值轉換為小圖片或者轉換為 <a href="https://en.wikipedia.org/wiki/Emoticons_(Unicode_block)">Unicode 表情符號字元</a></li>
+          </ul>
+        </li>
+
+        <li>留言訊息是允許包含各式各樣的 Unicode 字元的，像是「 <code>&lt;a href="http://some.random.website/"&gt;哈囉&lt;/a&gt;</code> 」這樣子也是合法的。所以請小心：別把任意的留言內容當作 HTML 字串未做處理就直接插入網頁文件中，因為那樣會造成預料之外的結果，例如突然產生一個超連結文字或者執行了一段 JavaScript。</li>
+
       </ol>
   </ul>
 </li>
@@ -71,7 +113,10 @@
 <li>
   <h2>加分項目</h2>
   <ul>
-    （第二週後公布）
+    <li>Bonus 1 (10%) 在前端額外提供一種操作介面，使我們可以選擇某一個 nickname 以後，只顯示該 nickname 發送出來的所有留言。</li>
+    <li>Bonus 2 (10%) 加入對留言按讚的功能，「某、某、某和某說這個讚」每個 nickname 最多只能 like 一次。</li>
+    <li>Bonus 3 (20%) 實作簡易的登入系統，需要登入註冊後的帳號才能以某個 nickname 發送留言。</li>
+    <li>Bonus 4 (??%) 任何你們想要追加的功能。</li>
   </ul>
 </li>
 
