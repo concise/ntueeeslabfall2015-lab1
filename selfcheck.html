@@ -1,0 +1,41 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>How to use the selfcheck scripts</title>
+
+<style>
+  ol {
+    margin-bottom: 2em;
+  }
+  li {
+    margin-top: .8em;
+    margin-bottom: .8em;
+  }
+  pre {
+    margin-left: 4em;
+  }
+</style>
+
+<h1>Lab 1 的 selfcheck 腳本使用方式</h1>
+<ol>
+  <li>下載該 bash script<pre>$ wget https://concise.github.io/ntueeeslabfall2015-lab1/eslab1-selfcheck</pre>
+  <li>假設你即將要繳交的檔案是 <code>some/path/to/ESLab1_Team00.zip</code>
+  <li>執行該 bash script 協助你做檢查<pre>$ bash eslab1-selfcheck some/path/to/ESLab1_Team00.zip</pre>
+  <li>當腳本輸出「 <code>* Everything seems to be OK!</code> 」時，表示你通過了基本檢查。
+</ol>
+
+<h1>Lab 2 的 selfcheck 腳本使用方式</h1>
+<ol>
+  <li>下載該 bash script<pre>$ wget https://concise.github.io/ntueeeslabfall2015-lab1/eslab2-selfcheck</pre>
+  <li>假設你即將要繳交的檔案是 <code>some/path/to/ESLab2_Team00.zip</code>
+  <li>執行該 bash script 協助你做檢查<pre>$ bash eslab2-selfcheck some/path/to/ESLab2_Team00.zip</pre>
+  <li>當腳本輸出「 <code>* Everything seems to be OK!</code> 」時，表示你通過了基本檢查。
+  <li>附註：要做出一個可通過此測試的壓縮檔應該是非常簡單。舉例來說，
+<pre>
+$ cd /tmp
+$ mkdir ESLab2_Team01
+$ touch ESLab2_Team01/report.pdf
+$ zip -r ESLab2_Team01.zip ESLab2_Team01
+$ wget https://concise.github.io/ntueeeslabfall2015-lab1/eslab2-selfcheck
+$ bash eslab2-selfcheck ESLab2_Team01.zip
+</pre>
+</ol>
