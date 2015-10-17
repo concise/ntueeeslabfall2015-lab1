@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -e
+
+declare -r -a VALID_ZIP_ARCHIVE_FILENAMES=(
+        ESLab1_Team01.zip ESLab1_Team02.zip ESLab1_Team03.zip
+        ESLab1_Team04.zip ESLab1_Team05.zip ESLab1_Team06.zip
+        ESLab1_Team07.zip ESLab1_Team08.zip ESLab1_Team09.zip
+        ESLab1_Team10.zip ESLab1_Team11.zip ESLab1_Team12.zip
+        ESLab1_Team13.zip
+)
+
+is_valid_zip_archive_filename () {
+        for valid_name in "${VALID_ZIP_ARCHIVE_FILENAMES[@]}"; do
+                if [[ $valid_name = $1 ]]; then
+                        return 0
+                fi
+        done
+        return 1
+}
+
+rtrim_dot_zip () {
+        printf '%s' "${1%.zip}"
+}
+
+
+
+if [[ $# = 1 ]]; then
+        :
+else
+        printf '* %s\n' "Error: You must provide a path to your zip archive"
+        exit 1
+fi
+
+
+
+if is_valid_zip_archive_filename "$( basename "$1" )"; then
+        SUBMISSION_DIRECTORY_NAME=$( rtrim_dot_zip "$( basename "$1" )" )
+else
+        printf '* %s\n' "Error: Filename '$( basename "$1" )' is invalid"
+        exit 1
+fi
+
+
+
+RAND=$( date +%Y-%m-%d-%H-%M-%S )-$( printf %05d $RANDOM )
+TMP_WORKING_DIRECTORY=/tmp/eslab-tmpdir-$RAND
+printf '* %s\n' "Creating directory '$TMP_WORKING_DIRECTORY'"
+mkdir "$TMP_WORKING_DIRECTORY"
+
+
+
+printf '* %s\n' "Uncompressing '$1' to '$TMP_WORKING_DIRECTORY'"
+unzip -q -d "$TMP_WORKING_DIRECTORY" "$1"
+
+
+
+printf '* %s\n' "Checking the result in '$TMP_WORKING_DIRECTORY'"
+RESULT=$( ls -1 -A "$TMP_WORKING_DIRECTORY" )
+if [[ $RESULT = $SUBMISSION_DIRECTORY_NAME ]]; then
+        :
+else
+      printf '* %s\n' "Error: We expect '$SUBMISSION_DIRECTORY_NAME/' in '$TMP_WORKING_DIRECTORY'"
+      exit 1
+fi
+
+
+
+printf '* %s\n' "Checking if there is a report.pdf file in '$TMP_WORKING_DIRECTORY/$SUBMISSION_DIRECTORY_NAME'"
+if [[ -f "$TMP_WORKING_DIRECTORY/$SUBMISSION_DIRECTORY_NAME/report.pdf" ]]; then
+        :
+else
+      printf '* %s\n' "Error: We expect 'report.pdf' in '$TMP_WORKING_DIRECTORY/$SUBMISSION_DIRECTORY_NAME'"
+      exit 1
+fi
+
+
+
+printf '* %s\n' "Removing directory '$TMP_WORKING_DIRECTORY'"
+rm -R -f "$TMP_WORKING_DIRECTORY"
+
+
+
+printf '* %s\n' 'Everything seems to be OK!'
